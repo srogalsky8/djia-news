@@ -147,15 +147,16 @@ def plot_distr():
     most_common_pos = (get_most_common(X[y==1], 3))
     most_common_neu = (get_most_common(X[y==2], 3))
 
-    (most_common, idx) = np.unique(np.concatenate([most_common_neg, most_common_pos, most_common_neu]), return_index=True)
+    (most_common, idx) = np.unique(np.concatenate([most_common_neg, most_common_pos]), return_index=True)
     most_common = most_common[idx.argsort()]
 
     labels = np.unique(y)
     plt_data = np.zeros((len(labels), len(most_common)))
     for (i, label) in enumerate(labels):
+        total = np.sum(X[y==label])
         freqs = np.sum(X[y==label], axis=0)
         for (j, word) in enumerate(most_common):
-            plt_data[i, j] = freqs[unique_dict[word]]
+            plt_data[i, j] = freqs[unique_dict[word]]/total
 
     print(labels)
     print(most_common)
@@ -163,19 +164,18 @@ def plot_distr():
 
     plt_X = np.arange(len(most_common))
 
-    # fig = plt.figure()
-    # ax = fig.add_axes([0,0,1,1])
     plt.bar(plt_X + 0.00, plt_data[0], color = 'r', width = 0.25)
     plt.bar(plt_X + 0.25, plt_data[1], color = 'g', width = 0.25)
     plt.bar(plt_X + 0.50, plt_data[2], color = 'gray', width = 0.25)
-    plt.ylabel('Occurences')
+    plt.ylabel('Relative frequency within label')
     plt.xlabel('Common words')
-    plt.title('Frequencies of most common words across labels')
+    plt.title('Relative frequency of most common words across labels')
     plt.xticks(plt_X, most_common)
     plt.legend(labels=['Negative', 'Positive', 'Neutral'])
     plt.show()
     
 
 
-knn_results()
+# knn_results()
 
+plot_distr()
