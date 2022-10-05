@@ -11,6 +11,8 @@ lemmatizer = WordNetLemmatizer()
 ps = PorterStemmer()
 news = pd.read_csv("./data/djia_news.csv")
 translator = str.maketrans('', '', string.punctuation)
+additional_stopwords = ['’', '–', '‘', '“', '”',
+'u', 'v', 'f', '—', '…', 'w', 'x', 'c', 'g', 'q', '•', '»', 'b', 'n']
 combined = []
 
 transformed = []
@@ -19,7 +21,8 @@ for i in range(0,len(news)):
     no_punc = headline.translate(translator)
     # words = [word.lower() for word in no_punc.split()] # get the lowercase version of words
     words = lemmatize_sentence(no_punc) # lemmatize with context
-    words = [word for word in words if word not in stopwords.words('english')] # remove stopwords
+    words = [word for word in words if word not in stopwords.words('english') and word not in additional_stopwords] # remove stopwords
+    # words = [word for word in words if word] # remove stopwords
     # words = [lemmatizer.lemmatize(word) for word in words] # no context lemmatization
     # words = [ps.stem(word) for word in words] # no context stemming
     transformed.append(words)
