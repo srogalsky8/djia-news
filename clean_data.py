@@ -22,7 +22,6 @@ for i in range(0,len(news)):
     # words = [word.lower() for word in no_punc.split()] # get the lowercase version of words
     words = lemmatize_sentence(no_punc) # lemmatize with context
     words = [word for word in words if word not in stopwords.words('english') and word not in additional_stopwords] # remove stopwords
-    # words = [word for word in words if word] # remove stopwords
     # words = [lemmatizer.lemmatize(word) for word in words] # no context lemmatization
     # words = [ps.stem(word) for word in words] # no context stemming
     transformed.append(words)
