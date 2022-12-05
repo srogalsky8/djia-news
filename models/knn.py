@@ -1,10 +1,11 @@
+import sys,os
+sys.path.append(os.path.realpath('..'))
 import numpy as np
 import matplotlib.pyplot as plt
 from statistics import mode
 import pandas as pd
 from sklearn.neighbors import NearestNeighbors
 import sklearn as sklearn
-import scipy
 from preprocess import X_tr, y_tr, X_te, y_te
 
 np.random.seed(10)
@@ -65,29 +66,6 @@ def do_svd(X_tr):
     V = svd[2]
     return (U, sigma, V)
 
-def do_lda(X_tr, y_tr, X_te):
-    classes = np.unique(y_tr)
-    S_b = 0
-    for (j, c) in enumerate(classes):
-        points_in_c = X_tr[y_tr == c]
-        class_centroid = np.mean(points_in_c, axis=0)
-        m_j_tilde = class_centroid - np.mean(X_tr, axis=0)
-        m_j_tilde = np.reshape(m_j_tilde,(1, m_j_tilde.size))
-        S_b += len(points_in_c)*np.matmul(m_j_tilde.T, m_j_tilde)
-
-    S_w = 0
-    for (j, c) in enumerate(classes):
-        points_in_c = X_tr[y_tr == c]
-        class_centroid = np.mean(points_in_c, axis=0)
-        x_j_tilde = points_in_c - class_centroid
-        S_w += np.matmul(x_j_tilde.T, x_j_tilde)
-
-    (e, V) = scipy.linalg.eig(S_b, S_w)
-    V_k = V[0:len(classes)-1]
-    X_tr_lda = np.matmul(X_tr, V_k.T)
-    X_te_lda = np.matmul(X_te, V_k.T)
-    return (X_tr_lda, X_te_lda)
-
 k = 12
 
 # Question 1
@@ -110,7 +88,8 @@ def knn_results():
     # (pca_k1_error_rates, y_pred) = do_knn(PC_k1, y_tr, PC_k1_test, y_te, k)
     (error_rates, y_pred) = do_knn(X_tr, y_tr, X_te, y_te, k)
 
-    print(len(y_pred))
+    print(sum(y_pred[7,:] == 0))
+    print(sum(y_pred[7,:] == 1))
 
     plt.plot(np.arange(1,k+1),error_rates,linestyle='--', marker='o', label='knn')
     min_x3 = np.argmin(error_rates)+1
@@ -126,47 +105,5 @@ def knn_results():
     plt.legend()
     plt.show()
 
-# def get_most_common(A, n=3):
-#     word_freq = np.sum(A, axis=0)
-#     freq_order = np.argsort(word_freq)[::-1]
-#     most_common = np.array(unique_list)[freq_order]
-#     return most_common[0:n]
-
-# def plot_distr():
-    # # get_most_common(X)
-    # most_common_neg = (get_most_common(X[y==0], 4))
-    # most_common_pos = (get_most_common(X[y==1], 3))
-    # most_common_neu = (get_most_common(X[y==2], 3))
-
-    # (most_common, idx) = np.unique(np.concatenate([most_common_neg, most_common_pos]), return_index=True)
-    # most_common = most_common[idx.argsort()]
-
-    # labels = np.unique(y)
-    # plt_data = np.zeros((len(labels), len(most_common)))
-    # for (i, label) in enumerate(labels):
-    #     total = np.sum(X[y==label])
-    #     freqs = np.sum(X[y==label], axis=0)
-    #     for (j, word) in enumerate(most_common):
-    #         plt_data[i, j] = freqs[unique_dict[word]]/total
-
-    # print(labels)
-    # print(most_common)
-    # print(plt_data)
-
-    # plt_X = np.arange(len(most_common))
-
-    # plt.bar(plt_X + 0.00, plt_data[0], color = 'r', width = 0.25)
-    # plt.bar(plt_X + 0.25, plt_data[1], color = 'g', width = 0.25)
-    # plt.bar(plt_X + 0.50, plt_data[2], color = 'gray', width = 0.25)
-    # plt.ylabel('Relative frequency within label')
-    # plt.xlabel('Common words')
-    # plt.title('Relative frequency of most common words across labels')
-    # plt.xticks(plt_X, most_common)
-    # plt.legend(labels=['Negative', 'Positive', 'Neutral'])
-    # plt.show()
-    
-
 
 knn_results()
-
-# plot_distr()
